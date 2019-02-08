@@ -55,7 +55,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>AssemblyVersion.tt</DependentUpon>
     </Compile>
-    <Compile Include="PartInfo.cs" />
+    <Compile Include="ModulePartInfo.cs" />
+    <Compile Include="PartInfoReloader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings.cs" />
   </ItemGroup>

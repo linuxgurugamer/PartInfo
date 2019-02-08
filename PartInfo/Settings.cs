@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if false
+
+using System;
 using System.IO;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,7 +13,7 @@ namespace PartInfo
 {
     // http://forum.kerbalspaceprogram.com/index.php?/topic/147576-modders-notes-for-ksp-12/#comment-2754813
     // search for "Mod integration into Stock Settings
-    public class Workshop_Settings : GameParameters.CustomParameterNode
+    public class PartInfoSettings : GameParameters.CustomParameterNode
     {
         public override string Title { get { return "Part Info"; } } // column heading
         public override GameParameters.GameMode GameMode { get { return GameParameters.GameMode.ANY; } }
@@ -53,3 +55,4 @@ namespace PartInfo
 
     }
 }
+#endif
