@@ -3,3 +3,7 @@
 
 0.0.1.1
 	Official release
+
+0.0.1.2
+	Added original name 
+	Shortened verbage

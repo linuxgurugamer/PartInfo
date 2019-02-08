@@ -8,25 +8,24 @@ namespace PartInfo
 {
     public class ModulePartInfo : PartModule
     {
+        [KSPField]
+        public string originalPartName;
+
         public override string GetInfo()
         {
-             moduleName = "ModulePartInfo";
+            moduleName = "ModulePartInfo";
 
             string st = "";
             //if (HighLogic.CurrentGame != null)
             {
+                st = "Orig Name: " + this.originalPartName;
+             st += "\nUpdt Name: " + this.part.partInfo.name;
 
-               // if (HighLogic.CurrentGame == null || HighLogic.CurrentGame.Parameters.CustomParams<PartInfoSettings>().showPartName)
-                    st = "Part Name: " + this.part.partInfo.name;
-                //if (HighLogic.CurrentGame == null || HighLogic.CurrentGame.Parameters.CustomParams<PartInfoSettings>().showPartPath)
-                {
-                    if (st != "")
-                        st += "\n";
-                    st += "Part Path: " + this.part.partInfo.partUrl;
-                }
+                st += "\nPath: " + this.part.partInfo.partUrl;
+
             }
 
-     
+
             return st;
         }
     }
