@@ -34,7 +34,7 @@
 
 # 3:SOURCEFILE, DESTDIR
 3:PartInfo.version,GameData/PartInfo
-3:LICENSE.txt,GameData/PartInfo
+3:License.txt,GameData/PartInfo
 
 #
 # End of file
