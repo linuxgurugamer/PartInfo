@@ -9,8 +9,15 @@ namespace PartInfo
     {
         public override string GetInfo()
         {
-
-            string st = "Part Name: " + this.part.partInfo.name + "\n" + "Part Path: " + this.part.partInfo.partUrl;
+            string st = "";
+            if (HighLogic.CurrentGame.Parameters.CustomParams<Workshop_Settings>().showPartName)
+                st = "Part Name: " + this.part.partInfo.name;
+            if (HighLogic.CurrentGame.Parameters.CustomParams<Workshop_Settings>().showPartPath)
+            {
+                if (st != "")
+                    st += "\n";
+                st = "Part Path: " + this.part.partInfo.partUrl;
+            }
             return st;
         }
     }
