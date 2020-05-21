@@ -17,3 +17,6 @@ ChangeLog
 
 0.0.2
 	Updated for KSP 1.8
+
+0.0.2.1
+	Fixed URL in .version file
