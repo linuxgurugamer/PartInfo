@@ -32,13 +32,16 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-     <Reference Include="$(KSPDIR)\KSP_x64_Data\Managed\Assembly*.dll">
-	   <Private>False</Private>
+    <Reference Include="$(KSPDIR)\KSP_x64_Data\Managed\Assembly*.dll">
+      <Private>False</Private>
     </Reference>
     <Reference Include="$(KSPDIR)\KSP_x64_Data\Managed\UnityEngine*.dll">
-	   <Private>False</Private>
+      <Private>False</Private>
     </Reference>
-    <Reference Include="System" />	
+    <Reference Include="ClickThroughBlocker">
+      <HintPath>R:\KSP_1.9.1_dev\GameData\000_ClickThroughBlocker\Plugins\ClickThroughBlocker.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyVersion.cs">

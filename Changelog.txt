@@ -20,3 +20,8 @@ ChangeLog
 
 0.0.2.1
 	Fixed URL in .version file
+
+0.0.3
+	Added modname into partinfo output
+	Added PartInfo action in editor, to show partinfo for selected part already placed in window
+		Has button to copy to clipboard
