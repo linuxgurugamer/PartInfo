@@ -69,7 +69,7 @@ namespace PartInfo
             winRect.width = size.x + 10;
             GUILayout.TextArea(GetInfo());
             GUILayout.BeginHorizontal();
-            if (GUILayout.Button("Close)"))
+            if (GUILayout.Button("Close"))
                 isVisible = false;
 
 
