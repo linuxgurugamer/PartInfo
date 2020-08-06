@@ -28,3 +28,8 @@ ChangeLog
 
 0.0.3.1
 	Fixed typo in Close button
+
+0.0.3.2
+	Thanks to user @Gordon-Dry for this:
+		Do not add ModulePartInfo to ThrottleControlledAvionics "parts" because ThrottleControlledAvionics uses dummy parts for tech tree unlocks of its modules.
+	Along the same lines, Breaking Ground's deployable parts are now excluded
