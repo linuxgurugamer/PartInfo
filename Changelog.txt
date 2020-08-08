@@ -43,3 +43,4 @@ ChangeLog
 
 0.0.3.4
 	Fixed missing part info section
+	Fixed issue with trying to show windows for more than one part

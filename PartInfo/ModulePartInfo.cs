@@ -83,7 +83,7 @@ namespace PartInfo
                 winRect.height = (float)(Screen.height * .75 + 50);
                 winRect.width = maxPrintWidth;
 
-                winRect = ClickThruBlocker.GUILayoutWindow(456789764, winRect, Window, "Part Information");
+                winRect = ClickThruBlocker.GUILayoutWindow((int)part.persistentId, winRect, Window, "Part Information");
             }
         }
 
@@ -113,18 +113,25 @@ namespace PartInfo
                 CalcWindowSize();
             }
 
-            sb.Append(GetInfo().TrimEnd('\r', '\n', ' '));
+            string str = GetInfo().TrimEnd('\r', '\n', ' ');
+            sb.Append(str);
             sbPrint.Append(sb);
             sbPrint.Append("\n-----------------------------------------------\n");
+
 
             GUILayout.BeginVertical();
 
             int cnt = 0;
             winRect.height = (float)(Screen.height * .75 + 20);
+
+            scrollPos = GUILayout.BeginScrollView(scrollPos, GUILayout.Height(winRect.height - 70));
+
+            GUILayout.BeginHorizontal();
+            GUILayout.TextArea(str);
+            GUILayout.EndHorizontal();
             GUILayout.BeginHorizontal();
             copyAll = GUILayout.Toggle(copyAll, "Copy All");
             GUILayout.EndHorizontal();
-            scrollPos = GUILayout.BeginScrollView(scrollPos, GUILayout.Height(winRect.height - 70));
 
             foreach (var m in part.Modules)
             {
@@ -145,13 +152,14 @@ namespace PartInfo
                             sbPrint.Append("\n-----------------------------------------------\n");
                         }
 
-                        string str = tmpSb.ToString();
-                        GUIContent tmpContent = new GUIContent(str);
-                        Vector2 tmpSize = GUI.skin.textArea.CalcSize(tmpContent);
-                        winRect.width = Math.Max(tmpSize.x + 10, winRect.width);
+                        //string str = tmpSb.ToString();
+                        //GUIContent tmpContent = new GUIContent(str);
+                        //Vector2 tmpSize = GUI.skin.textArea.CalcSize(tmpContent);
+                        //winRect.width = Math.Max(tmpSize.x + 10, winRect.width);
+
                         GUILayout.BeginHorizontal();
                         printModule[cnt] = GUILayout.Toggle(printModule[cnt], "");
-                        GUILayout.TextArea(str);
+                        GUILayout.TextArea(tmpSb.ToString());
                         GUILayout.EndHorizontal();
                         cnt++;
                     }
