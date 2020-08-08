@@ -31,7 +31,7 @@ namespace PartInfo
 
         public override string GetInfo()
         {
-            moduleName = "ModulePartInfo";
+            moduleName = "Part Info";
 
             string st = "";
             //if (HighLogic.CurrentGame != null)
@@ -54,7 +54,6 @@ namespace PartInfo
                 }
                 st += "\nPath: " + this.part.partInfo.partUrl + "\n";
             }
-
 
             return st;
         }
@@ -92,17 +91,15 @@ namespace PartInfo
         {
             foreach (var m in part.Modules)
             {
-                if (m.moduleName != "ModulePartInfo")
-                {
-                    var info = m.GetInfo().TrimEnd(' ', '\r', '\n');
+                var info = m.GetInfo().TrimEnd(' ', '\r', '\n');
 
-                    tmpSb.Append(info);
-                    string str = tmpSb.ToString();
-                    GUIContent tmpContent = new GUIContent(str);
-                    Vector2 tmpSize = GUI.skin.textArea.CalcSize(tmpContent);
-                    maxPrintWidth = Math.Max(tmpSize.x + 10, maxPrintWidth);
+                tmpSb.Append(info);
+                string str = tmpSb.ToString();
+                GUIContent tmpContent = new GUIContent(str);
+                Vector2 tmpSize = GUI.skin.textArea.CalcSize(tmpContent);
+                maxPrintWidth = Math.Max(tmpSize.x + 10, maxPrintWidth);
+                tmpSb.Clear();
 
-                }
             }
 
         }
@@ -111,20 +108,19 @@ namespace PartInfo
             sb.Clear();
             tmpSb.Clear();
             sbPrint.Clear();
-
-            GUILayout.BeginVertical();
-
-            sb.Append(GetInfo().TrimEnd('\r', '\n', ' '));
-            sbPrint.Append(sb);
-            sbPrint.Append(tmpSb);
-            sbPrint.Append("\n-----------------------------------------------\n");
-
-            int cnt = 0;
-            winRect.height = (float)(Screen.height * .75 + 20);
             if (maxPrintWidth == 0)
             {
                 CalcWindowSize();
             }
+
+            sb.Append(GetInfo().TrimEnd('\r', '\n', ' '));
+            sbPrint.Append(sb);
+            sbPrint.Append("\n-----------------------------------------------\n");
+
+            GUILayout.BeginVertical();
+
+            int cnt = 0;
+            winRect.height = (float)(Screen.height * .75 + 20);
             GUILayout.BeginHorizontal();
             copyAll = GUILayout.Toggle(copyAll, "Copy All");
             GUILayout.EndHorizontal();

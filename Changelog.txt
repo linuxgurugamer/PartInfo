@@ -40,3 +40,6 @@ ChangeLog
 	Changed output so that if the original part name was the same as the current part name, to only show the name
 	Implemented using Stringbuilder to build the display string
 	Added ability to copy all or just copy some of the part modules
+
+0.0.3.4
+	Fixed missing part info section
