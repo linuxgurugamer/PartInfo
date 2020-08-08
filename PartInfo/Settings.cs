@@ -1,4 +1,4 @@
-﻿#if false
+﻿#if true
 
 using System;
 using System.IO;
@@ -13,6 +13,7 @@ namespace PartInfo
 {
     // http://forum.kerbalspaceprogram.com/index.php?/topic/147576-modders-notes-for-ksp-12/#comment-2754813
     // search for "Mod integration into Stock Settings
+    // HighLogic.CurrentGame.Parameters.CustomParams<PartInfoSettings>().useAltSkin
     public class PartInfoSettings : GameParameters.CustomParameterNode
     {
         public override string Title { get { return "Part Info"; } } // column heading
@@ -22,14 +23,17 @@ namespace PartInfo
         public override int SectionOrder { get { return 1; } }
         public override bool HasPresets { get { return false; } }
 
-
+#if false
         [GameParameters.CustomParameterUI("Show Part Name")]
         public bool showPartName = true;
 
         [GameParameters.CustomParameterUI("Show Part Path")]
         public bool showPartPath = true;
+#endif
 
-        
+
+        [GameParameters.CustomParameterUI("Available in Flight Scene")]
+        public bool availableInFlight = true;
 
         public override void SetDifficultyPreset(GameParameters.Preset preset)
         {
