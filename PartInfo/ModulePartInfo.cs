@@ -28,10 +28,10 @@ namespace PartInfo
         StringBuilder tmpSb = new StringBuilder();
         StringBuilder sbPrint = new StringBuilder();
 
-
+        const  string MODULENAME = "ModulePartInfo";
         public override string GetInfo()
         {
-            moduleName = "Part Info";
+            moduleName = MODULENAME;
 
             string st = "";
             //if (HighLogic.CurrentGame != null)
@@ -135,7 +135,7 @@ namespace PartInfo
 
             foreach (var m in part.Modules)
             {
-                if (m.moduleName != "ModulePartInfo")
+                if (m.moduleName != MODULENAME)
                 {
                     tmpSb.Clear();
                     var info = m.GetInfo().TrimEnd(' ', '\r', '\n');
