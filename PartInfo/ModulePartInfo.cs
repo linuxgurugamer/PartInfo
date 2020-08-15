@@ -28,7 +28,7 @@ namespace PartInfo
         StringBuilder tmpSb = new StringBuilder();
         StringBuilder sbPrint = new StringBuilder();
 
-        const  string MODULENAME = "ModulePartInfo";
+        const string MODULENAME = "ModulePartInfo";
         public override string GetInfo()
         {
             moduleName = MODULENAME;
@@ -42,7 +42,7 @@ namespace PartInfo
                 if (path.Length > 0)
                     mod = path.Substring(0, path.IndexOf('/'));
 
-                st = path = "<b>Mod: " + mod + "</b>";
+                st = path = bold + "Mod: " + mod + unbold;
                 if (originalPartName == part.partInfo.name)
                 {
                     st += "\nName: " + this.originalPartName;
@@ -75,13 +75,24 @@ namespace PartInfo
             if (HighLogic.LoadedSceneIsFlight)
                 Events["ShowPartInfo"].guiActive = true;
         }
+        string bold = "<b>", unbold = "</b>";
         private void OnGUI()
         {
             if (isVisible)
             {
-                GUI.skin = HighLogic.Skin;
-                winRect.height = (float)(Screen.height * .75 + 50);
-                winRect.width = maxPrintWidth;
+                if (!HighLogic.CurrentGame.Parameters.CustomParams<PartInfoSettings>().useAltSkin)
+                {
+                    GUI.skin = HighLogic.Skin;
+                    bold = "<b>";
+                    unbold = "</b>";
+                }
+                else
+                {
+                    bold = "";
+                    unbold = "";
+                }
+                //winRect.height = (float)(Screen.height * HighLogic.CurrentGame.Parameters.CustomParams<PartInfoSettings>().WindowHeightPercentage + 50);
+                //winRect.width = maxPrintWidth;
 
                 winRect = ClickThruBlocker.GUILayoutWindow((int)part.persistentId, winRect, Window, "Part Information");
             }
@@ -103,6 +114,24 @@ namespace PartInfo
             }
 
         }
+
+        string GetResourceValues()
+        {
+            if (part.Resources.Count == 0)
+                return "";
+            tmpSb.Clear();
+            tmpSb.AppendLine(bold + "Resources:" + unbold);
+            foreach (PartResource r in part.Resources)
+            {
+                tmpSb.AppendLine("    " + r.resourceName + ": " + r.amount.ToString("F1") + "/" + r.maxAmount.ToString("F1"));
+            }
+            return tmpSb.ToString();
+        }
+
+        void AddDashedLine()
+        {
+            sbPrint.AppendLine("-----------------------------------------------");
+        }
         void Window(int id)
         {
             sb.Clear();
@@ -114,20 +143,24 @@ namespace PartInfo
             }
 
             string str = GetInfo().TrimEnd('\r', '\n', ' ');
-            sb.Append(str);
+            sb.AppendLine(str);
             sbPrint.Append(sb);
-            sbPrint.Append("\n-----------------------------------------------\n");
+            AddDashedLine();
 
+            string resVal = GetResourceValues();
+            sb.Append(tmpSb);
+            sbPrint.Append(tmpSb);
+            AddDashedLine();
 
             GUILayout.BeginVertical();
 
             int cnt = 0;
-            winRect.height = (float)(Screen.height * .75 + 20);
+            winRect.height = (float)(Screen.height * HighLogic.CurrentGame.Parameters.CustomParams<PartInfoSettings>().WindowHeightPercentage);
 
             scrollPos = GUILayout.BeginScrollView(scrollPos, GUILayout.Height(winRect.height - 70));
 
             GUILayout.BeginHorizontal();
-            GUILayout.TextArea(str);
+            GUILayout.TextArea(str + "\n" + resVal);
             GUILayout.EndHorizontal();
             GUILayout.BeginHorizontal();
             copyAll = GUILayout.Toggle(copyAll, "Copy All");
@@ -141,25 +174,23 @@ namespace PartInfo
                     var info = m.GetInfo().TrimEnd(' ', '\r', '\n');
                     if (info != null && info != "")
                     {
-                        tmpSb.AppendLine("<b>" + m.moduleName + "</b>");
+                        tmpSb.AppendLine(bold + m.moduleName + unbold);
                         tmpSb.AppendLine();
-                        tmpSb.Append(info);
+                        tmpSb.AppendLine(info);
 
                         sb.Append(tmpSb);
                         if (printModule[cnt] || copyAll)
                         {
                             sbPrint.Append(tmpSb);
-                            sbPrint.Append("\n-----------------------------------------------\n");
+                            AddDashedLine();
                         }
-
-                        //string str = tmpSb.ToString();
-                        //GUIContent tmpContent = new GUIContent(str);
-                        //Vector2 tmpSize = GUI.skin.textArea.CalcSize(tmpContent);
-                        //winRect.width = Math.Max(tmpSize.x + 10, winRect.width);
 
                         GUILayout.BeginHorizontal();
                         printModule[cnt] = GUILayout.Toggle(printModule[cnt], "");
-                        GUILayout.TextArea(tmpSb.ToString());
+                        if (!HighLogic.CurrentGame.Parameters.CustomParams<PartInfoSettings>().useAltSkin)
+                            GUILayout.TextArea(tmpSb.ToString(), GUILayout.Width(winRect.width - 90));
+                        else
+                            GUILayout.TextArea(tmpSb.ToString(), GUILayout.Width(winRect.width - 80));
                         GUILayout.EndHorizontal();
                         cnt++;
                     }

@@ -35,9 +35,25 @@ namespace PartInfo
         [GameParameters.CustomParameterUI("Available in Flight Scene")]
         public bool availableInFlight = true;
 
+        float windowHeightPercentage = 0.75f;
+        [GameParameters.CustomFloatParameterUI("Window Height Percentage (%)", minValue = 25f, maxValue = 100.0f,
+                 toolTip = "Size of the window as a percentage of the screen height ")]
+        public float WindowHeightPercent
+        {
+            get { return windowHeightPercentage * 100; }
+            set { windowHeightPercentage = value / 100.0f; }
+        }
+        public float WindowHeightPercentage { get { return windowHeightPercentage; } }
+
+
+
+        [GameParameters.CustomParameterUI("Use alternate skin",
+          toolTip = "Use a more minimiliast skin")]
+        public bool useAltSkin = true;
+
         public override void SetDifficultyPreset(GameParameters.Preset preset)
         {
-          
+
         }
 
         public override bool Enabled(MemberInfo member, GameParameters parameters)
