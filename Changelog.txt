@@ -52,3 +52,6 @@ ChangeLog
 	Added display of resources
 	Added alternate skin
 	Added resizing of window as percentage of screen height
+
+0.0.3.7
+	Added display of mass of part and resources

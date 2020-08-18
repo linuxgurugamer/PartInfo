@@ -48,7 +48,7 @@ namespace PartInfo
 
 
         [GameParameters.CustomParameterUI("Use alternate skin",
-          toolTip = "Use a more minimiliast skin")]
+          toolTip = "Use a more minimiliast skin, no color")]
         public bool useAltSkin = true;
 
         public override void SetDifficultyPreset(GameParameters.Preset preset)

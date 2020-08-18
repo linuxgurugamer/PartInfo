@@ -115,15 +115,26 @@ namespace PartInfo
 
         }
 
+        string FormatMass(double mass)
+        {
+            if (mass < 1)
+                return (mass * 1000).ToString("F2") + " kg";
+            return mass.ToString("F3") + " t";
+        }
         string GetResourceValues()
         {
-            if (part.Resources.Count == 0)
-                return "";
             tmpSb.Clear();
-            tmpSb.AppendLine(bold + "Resources:" + unbold);
-            foreach (PartResource r in part.Resources)
+            tmpSb.AppendLine(bold + "Mass: " + unbold + FormatMass(part.mass));
+
+            if (part.Resources.Count > 0)
             {
-                tmpSb.AppendLine("    " + r.resourceName + ": " + r.amount.ToString("F1") + "/" + r.maxAmount.ToString("F1"));
+
+                tmpSb.AppendLine(bold + "Resources:" + unbold);
+                foreach (PartResource r in part.Resources)
+                {
+                    double mass = r.amount * r.info.density;
+                    tmpSb.AppendLine("    " + r.resourceName + ": " + r.amount.ToString("F1") + "/" + r.maxAmount.ToString("F1") + ", mass: " + FormatMass(mass));
+                }
             }
             return tmpSb.ToString();
         }
