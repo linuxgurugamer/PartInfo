@@ -55,3 +55,6 @@ ChangeLog
 
 0.0.3.7
 	Added display of mass of part and resources
+
+0.0.4
+	Cleaned up output by stripping the markdown
