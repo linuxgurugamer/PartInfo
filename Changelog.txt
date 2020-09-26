@@ -58,3 +58,6 @@ ChangeLog
 
 0.0.4
 	Cleaned up output by stripping the markdown
+
+0.0.4.1
+	Replace html stripper code for better stripping
