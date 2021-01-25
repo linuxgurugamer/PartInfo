@@ -51,7 +51,10 @@ namespace PartInfo
                     st += "\nOrig Name: " + this.originalPartName;
                     st += "\nUpdt Name: " + this.part.partInfo.name;
                 }
-                st += "\nPath: " + this.part.partInfo.partUrl + "\n";
+                st += "\nPath: " + this.part.partInfo.partUrl;
+
+                st += "\nSize: " + this.part.partInfo.partSize.ToString("F2");
+                st += "\nBulkhead Profiles: " + this.part.partInfo.bulkheadProfiles + "\n";
             }
 
             return st;
@@ -75,6 +78,8 @@ namespace PartInfo
                 Events["ShowPartInfo"].guiActive = true;
         }
         string bold = "<b>", unbold = "</b>";
+        bool showFull = false;
+        bool showFullToggle = true;
         private void OnGUI()
         {
             if (isVisible)
@@ -180,15 +185,30 @@ namespace PartInfo
             int cnt = 0;
             winRect.height = (float)(Screen.height * HighLogic.CurrentGame.Parameters.CustomParams<PartInfoSettings>().WindowHeightPercentage);
 
-            scrollPos = GUILayout.BeginScrollView(scrollPos, GUILayout.Height(winRect.height - 70));
 
+            if (HighLogic.LoadedSceneIsEditor)
+            {
+                showFull = (EditorLogic.RootPart == this.part || this.part.parent != null);
+            } else
+            {
+                showFull = true;
+            }
+            showFullToggle = GUILayout.Toggle(showFullToggle, "Show all modules");
+            if (!showFullToggle)                
+                winRect.height  /= 3;
+
+            
+            scrollPos = GUILayout.BeginScrollView(scrollPos, GUILayout.Height(winRect.height - 70));
+           
             GUILayout.BeginHorizontal();
             GUILayout.TextArea(str + "\n" + resVal);
+           
             GUILayout.EndHorizontal();
             GUILayout.BeginHorizontal();
             copyAll = GUILayout.Toggle(copyAll, "Copy All");
             GUILayout.EndHorizontal();
 
+            if (showFull)
             foreach (var m in part.Modules)
             {
                 if (m.moduleName != MODULENAME)

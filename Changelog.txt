@@ -61,3 +61,7 @@ ChangeLog
 
 0.0.4.1
 	Replace html stripper code for better stripping
+
+0.0.5 
+	Added part size & Bulkhead Profiles
+	Added Show Full toggle to show a shorter window
