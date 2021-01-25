@@ -185,15 +185,18 @@ namespace PartInfo
             int cnt = 0;
             winRect.height = (float)(Screen.height * HighLogic.CurrentGame.Parameters.CustomParams<PartInfoSettings>().WindowHeightPercentage);
 
-
             if (HighLogic.LoadedSceneIsEditor)
             {
                 showFull = (EditorLogic.RootPart == this.part || this.part.parent != null);
-            } else
+            }
+            else
             {
                 showFull = true;
             }
-            showFullToggle = GUILayout.Toggle(showFullToggle, "Show all modules");
+            if (showFull)
+                showFullToggle = GUILayout.Toggle(showFullToggle, "Show all modules");
+            else
+                showFullToggle = false;
             if (!showFullToggle)                
                 winRect.height  /= 3;
 
