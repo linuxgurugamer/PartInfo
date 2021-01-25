@@ -28,6 +28,11 @@ namespace PartInfo
         StringBuilder sbPrint = new StringBuilder();
 
         const string MODULENAME = "ModulePartInfo";
+
+        string bold = "<b>", unbold = "</b>";
+        bool showFull = false;
+        bool showFullToggle = true;
+
         public override string GetInfo()
         {
             moduleName = MODULENAME;
@@ -76,10 +81,9 @@ namespace PartInfo
             winRect.y = (Screen.height - HEIGHT) / 2;
             if (HighLogic.LoadedSceneIsFlight)
                 Events["ShowPartInfo"].guiActive = true;
+            showFullToggle = HighLogic.CurrentGame.Parameters.CustomParams<PartInfoSettings>().showFullWindow;
+
         }
-        string bold = "<b>", unbold = "</b>";
-        bool showFull = false;
-        bool showFullToggle = true;
         private void OnGUI()
         {
             if (isVisible)

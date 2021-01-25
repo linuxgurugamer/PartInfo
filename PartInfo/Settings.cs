@@ -31,6 +31,8 @@ namespace PartInfo
         public bool showPartPath = true;
 #endif
 
+        [GameParameters.CustomParameterUI("Window size default to large")]
+        public bool showFullWindow = true;
 
         [GameParameters.CustomParameterUI("Available in Flight Scene")]
         public bool availableInFlight = true;
