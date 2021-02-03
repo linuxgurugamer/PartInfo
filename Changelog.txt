@@ -66,3 +66,8 @@ ChangeLog
 	Added part size & Bulkhead Profiles
 	Added Show Full toggle to show a shorter window
 	Added config option to default to large window
+
+0.0.6
+	Fixed CopyAll to enable ALL copy toggles when selected
+	Deselecting CopyAll will disable ALL copy toggles
+	Disable CopyAll if one or more of the copy toggles is deselected

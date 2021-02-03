@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Text.RegularExpressions ;
+using System.Text.RegularExpressions;
 using System.Text;
 using UnityEngine;
 using ClickThroughFix;
@@ -201,48 +201,61 @@ namespace PartInfo
                 showFullToggle = GUILayout.Toggle(showFullToggle, "Show all modules");
             else
                 showFullToggle = false;
-            if (!showFullToggle)                
-                winRect.height  /= 3;
+            if (!showFullToggle)
+                winRect.height /= 3;
 
-            
+
             scrollPos = GUILayout.BeginScrollView(scrollPos, GUILayout.Height(winRect.height - 70));
-           
+
             GUILayout.BeginHorizontal();
             GUILayout.TextArea(str + "\n" + resVal);
-           
+
             GUILayout.EndHorizontal();
             GUILayout.BeginHorizontal();
-            copyAll = GUILayout.Toggle(copyAll, "Copy All");
+            bool newCopyAll = GUILayout.Toggle(copyAll, "Copy All");
+            if (newCopyAll != copyAll)
+            {
+                for (int i = 0; i < part.Modules.Count; i++)
+                    printModule[i] = newCopyAll;
+                copyAll = newCopyAll;
+            }            
+
             GUILayout.EndHorizontal();
 
             if (showFull)
-            foreach (var m in part.Modules)
             {
-                if (m.moduleName != MODULENAME)
+                for (int i = 0; i < part.Modules.Count; i++)
+                //foreach (var m in part.Modules)
                 {
-                    tmpSb.Clear();
-                    var info = m.GetInfo().TrimEnd(' ', '\r', '\n');
-                    if (info != null && info != "")
+                    var m = part.Modules[i];
+                    if (m.moduleName != MODULENAME)
                     {
-                        tmpSb.AppendLine(bold + m.moduleName + unbold);
-                        tmpSb.AppendLine();
-                        tmpSb.AppendLine(info);
-
-                        sb.Append(tmpSb);
-                        if (printModule[cnt] || copyAll)
+                        tmpSb.Clear();
+                        var info = m.GetInfo().TrimEnd(' ', '\r', '\n');
+                        if (info != null && info != "")
                         {
-                            sbPrint.Append(tmpSb);
-                            AddDashedLine();
-                        }
+                            tmpSb.AppendLine(bold + m.moduleName + unbold);
+                            tmpSb.AppendLine();
+                            tmpSb.AppendLine(info);
 
-                        GUILayout.BeginHorizontal();
-                        printModule[cnt] = GUILayout.Toggle(printModule[cnt], "");
-                        if (!HighLogic.CurrentGame.Parameters.CustomParams<PartInfoSettings>().useAltSkin)
-                            GUILayout.TextArea(StripHtml(tmpSb.ToString()), GUILayout.Width(winRect.width - 90));
-                        else
-                            GUILayout.TextArea(StripHtml( tmpSb.ToString()), GUILayout.Width(winRect.width - 80));
-                        GUILayout.EndHorizontal();
-                        cnt++;
+                            sb.Append(tmpSb);
+                            if (printModule[cnt] || copyAll)
+                            {
+                                sbPrint.Append(tmpSb);
+                                AddDashedLine();
+                            }
+
+                            GUILayout.BeginHorizontal();
+                            printModule[cnt] = GUILayout.Toggle(printModule[cnt], "");
+                            if (!printModule[cnt])
+                                copyAll = false;
+                            if (!HighLogic.CurrentGame.Parameters.CustomParams<PartInfoSettings>().useAltSkin)
+                                GUILayout.TextArea(StripHtml(tmpSb.ToString()), GUILayout.Width(winRect.width - 90));
+                            else
+                                GUILayout.TextArea(StripHtml(tmpSb.ToString()), GUILayout.Width(winRect.width - 80));
+                            GUILayout.EndHorizontal();
+                            cnt++;
+                        }
                     }
                 }
             }
