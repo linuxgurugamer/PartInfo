@@ -71,3 +71,6 @@ ChangeLog
 	Fixed CopyAll to enable ALL copy toggles when selected
 	Deselecting CopyAll will disable ALL copy toggles
 	Disable CopyAll if one or more of the copy toggles is deselected
+
+0.0.6.1
+	Added code to deal with embedded character sequence @"\n", found in new ModuleCargoPart

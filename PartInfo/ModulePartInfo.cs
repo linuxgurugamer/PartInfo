@@ -111,8 +111,9 @@ namespace PartInfo
             foreach (var m in part.Modules)
             {
                 var info = m.GetInfo().TrimEnd(' ', '\r', '\n');
+                info = info.Replace(@"\n", "\n");
+                tmpSb.AppendLine(info);
 
-                tmpSb.Append(info);
                 string str = tmpSb.ToString();
                 GUIContent tmpContent = new GUIContent(str);
                 Vector2 tmpSize = GUI.skin.textArea.CalcSize(tmpContent);
@@ -175,7 +176,9 @@ namespace PartInfo
             }
 
             string str = GetInfo().TrimEnd('\r', '\n', ' ');
-            sb.AppendLine(str);
+            str = str.Replace(@"\n", "\n");
+
+                sb.AppendLine(str);
             sbPrint.Append(sb);
             AddDashedLine();
 
@@ -218,7 +221,7 @@ namespace PartInfo
                 for (int i = 0; i < part.Modules.Count; i++)
                     printModule[i] = newCopyAll;
                 copyAll = newCopyAll;
-            }            
+            }
 
             GUILayout.EndHorizontal();
 
@@ -232,10 +235,13 @@ namespace PartInfo
                     {
                         tmpSb.Clear();
                         var info = m.GetInfo().TrimEnd(' ', '\r', '\n');
+
                         if (info != null && info != "")
                         {
                             tmpSb.AppendLine(bold + m.moduleName + unbold);
                             tmpSb.AppendLine();
+
+                            info = info.Replace(@"\n", "\n");
                             tmpSb.AppendLine(info);
 
                             sb.Append(tmpSb);
