@@ -80,3 +80,10 @@ ChangeLog
 	Updated version file for 1.12
 	Thanks to @yalov for this:
 		Fixed Empty "Part Information" and nullref spam on asteroids in flight
+
+0.0.7
+	Performance improvement:
+		Removed the OnGUI methods from the PartModule (moved to PartInfoWindow)
+		Created new MonoBehaviour:  PartInfoWindow
+		Instantiates PartInfoWindow when called
+		Added code to prevent multiple versions of the window from being opened for a single part
