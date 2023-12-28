@@ -87,3 +87,6 @@ ChangeLog
 		Created new MonoBehaviour:  PartInfoWindow
 		Instantiates PartInfoWindow when called
 		Added code to prevent multiple versions of the window from being opened for a single part
+
+0.0.8
+	Added display of float curves, both graphical and values

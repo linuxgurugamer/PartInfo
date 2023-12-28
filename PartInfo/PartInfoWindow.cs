@@ -5,7 +5,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
-//using KSP_Log;
 
 namespace PartInfo
 {
@@ -36,6 +35,8 @@ namespace PartInfo
 
         ModulePartInfo mpi;
         Part part;
+
+        FloatCurveGraph[,] floatCurveGraphs = new FloatCurveGraph[MAXMODULES, 5];
 
         //internal static Log Log = null;
 
@@ -71,8 +72,13 @@ namespace PartInfo
 
             //if (printModule == null)
             printModule = new bool[MAXMODULES];
+            GameEvents.onEditorPartEvent .Add(onEditorPartEvent);
+        }
 
-
+        void onEditorPartEvent(ConstructionEventType  cet, Part e)
+        {
+            Debug.Log("PartInfo:  onEditorPartEvent");
+            floatCurveGraphs = new FloatCurveGraph[MAXMODULES, 5];
         }
 
         private void OnGUI()
@@ -89,8 +95,6 @@ namespace PartInfo
                     bold = "";
                     unbold = "";
                 }
-                //winRect.height = (float)(Screen.height * HighLogic.CurrentGame.Parameters.CustomParams<PartInfoSettings>().WindowHeightPercentage + 50);
-                //winRect.width = maxPrintWidth;
 
                 winRect = ClickThruBlocker.GUILayoutWindow((int)part.persistentId, winRect, Window, "Part Information");
             }
@@ -109,7 +113,6 @@ namespace PartInfo
                 Vector2 tmpSize = GUI.skin.textArea.CalcSize(tmpContent);
                 maxPrintWidth = Math.Max(tmpSize.x + 10, maxPrintWidth);
                 tmpSb.Clear();
-
             }
 
         }
@@ -120,6 +123,7 @@ namespace PartInfo
                 return (mass * 1000).ToString("F2") + " kg";
             return mass.ToString("F3") + " t";
         }
+
         string GetResourceValues()
         {
             tmpSb.Clear();
@@ -177,107 +181,299 @@ namespace PartInfo
             sbPrint.Append(tmpSb);
             AddDashedLine();
 
-            GUILayout.BeginVertical();
-
-            int cnt = 0;
-            winRect.height = (float)(Screen.height * HighLogic.CurrentGame.Parameters.CustomParams<PartInfoSettings>().WindowHeightPercentage);
-
-            if (HighLogic.LoadedSceneIsEditor)
+            using (new GUILayout.VerticalScope())
             {
-                showFull = (EditorLogic.RootPart == this.part || this.part.parent != null);
-            }
-            else
-            {
-                showFull = true;
-            }
-            if (showFull)
-                showFullToggle = GUILayout.Toggle(showFullToggle, "Show all modules");
-            else
-                showFullToggle = false;
-            if (!showFullToggle)
-                winRect.height /= 3;
 
-            scrollPos = GUILayout.BeginScrollView(scrollPos, GUILayout.Height(winRect.height - 70));
+                int cnt = 0;
+                winRect.height = (float)(Screen.height * HighLogic.CurrentGame.Parameters.CustomParams<PartInfoSettings>().WindowHeightPercentage);
 
-            GUILayout.BeginHorizontal();
-            GUILayout.TextArea(str + "\n" + resVal);
-
-            GUILayout.EndHorizontal();
-            GUILayout.BeginHorizontal();
-            bool newCopyAll = GUILayout.Toggle(copyAll, "Copy All");
-
-            if (newCopyAll != copyAll)
-            {
-                for (int i = 0; i < part.Modules.Count; i++)
-                    printModule[i] = newCopyAll;
-                copyAll = newCopyAll;
-            }
-
-            GUILayout.EndHorizontal();
-
-            if (showFull)
-            {
-                for (int i = 0; i < part.Modules.Count; i++)
-                //foreach (var m in part.Modules)
+                if (HighLogic.LoadedSceneIsEditor)
                 {
-                    var m = part.Modules[i];
-                    if (m.moduleName != ModulePartInfo.MODULENAME)
+                    showFull = (EditorLogic.RootPart == this.part || this.part.parent != null);
+                }
+                else
+                {
+                    showFull = true;
+                }
+                if (showFull)
+                    showFullToggle = GUILayout.Toggle(showFullToggle, "Show all modules");
+                else
+                    showFullToggle = false;
+                if (!showFullToggle)
+                    winRect.height /= 3;
+
+                scrollPos = GUILayout.BeginScrollView(scrollPos, GUILayout.Height(winRect.height - 70));
+
+                using (new GUILayout.HorizontalScope())
+                {
+                    GUILayout.TextArea(str + "\n" + resVal);
+                }
+                using (new GUILayout.HorizontalScope())
+                {
+                    bool newCopyAll = GUILayout.Toggle(copyAll, "Copy All");
+
+                    if (newCopyAll != copyAll)
                     {
-                        tmpSb.Clear();
-                        var info = m.GetInfo().TrimEnd(' ', '\r', '\n');
-
-                        if (info != null && info != "")
+                        for (int i = 0; i < part.Modules.Count; i++)
+                            printModule[i] = newCopyAll;
+                        copyAll = newCopyAll;
+                    }
+                }
+                if (showFull)
+                {
+                    using (new GUILayout.VerticalScope())
+                    {
+                        for (int i = 0; i < part.Modules.Count; i++)
                         {
-                            tmpSb.AppendLine(bold + m.moduleName + unbold);
-                            tmpSb.AppendLine();
-
-                            info = info.Replace(@"\n", "\n");
-                            tmpSb.AppendLine(info);
-
-                            sb.Append(tmpSb);
-                            if (printModule[cnt] || copyAll)
+                            var m = part.Modules[i];
+                            if (m.moduleName != ModulePartInfo.MODULENAME)
                             {
-                                sbPrint.Append(tmpSb);
-                                AddDashedLine();
-                            }
+                                tmpSb.Clear();
+                                var info = m.GetInfo().TrimEnd(' ', '\r', '\n');
 
-                            GUILayout.BeginHorizontal();
-                            printModule[cnt] = GUILayout.Toggle(printModule[cnt], "");
-                            if (!printModule[cnt])
-                                copyAll = false;
-                            if (!HighLogic.CurrentGame.Parameters.CustomParams<PartInfoSettings>().useAltSkin)
-                                GUILayout.TextArea(StripHtml(tmpSb.ToString()), GUILayout.Width(winRect.width - 90));
-                            else
-                                GUILayout.TextArea(StripHtml(tmpSb.ToString()), GUILayout.Width(winRect.width - 80));
-                            GUILayout.EndHorizontal();
-                            cnt++;
+                                if (info != null && info != "")
+                                {
+                                    tmpSb.AppendLine(bold + m.moduleName + unbold);
+                                    tmpSb.AppendLine();
+
+                                    info = info.Replace(@"\n", "\n");
+                                    tmpSb.AppendLine(info);
+
+                                    sb.Append(tmpSb);
+                                    if (printModule[cnt] || copyAll)
+                                    {
+                                        sbPrint.Append(tmpSb);
+                                        AddDashedLine();
+                                    }
+
+                                    using (new GUILayout.HorizontalScope())
+                                    {
+
+                                        printModule[cnt] = GUILayout.Toggle(printModule[cnt], "");
+                                        if (!printModule[cnt])
+                                            copyAll = false;
+                                        if (!HighLogic.CurrentGame.Parameters.CustomParams<PartInfoSettings>().useAltSkin)
+                                            GUILayout.TextArea(StripHtml(tmpSb.ToString()), GUILayout.Width(winRect.width - 90));
+                                        else
+                                            GUILayout.TextArea(StripHtml(tmpSb.ToString()), GUILayout.Width(winRect.width - 80));
+                                    }
+                                    cnt++;
+                                }
+
+                                if (m is ModuleEngines || m is ModuleEnginesFX || m is ModuleRCS || m is ModuleRCSFX) 
+                                {
+                                    int i1 = 0;
+
+                                    if (!HighLogic.CurrentGame.Parameters.CustomParams<PartInfoSettings>().useAltSkin)
+                                        i1 = 110;
+                                    else
+                                        i1 = 100;
+                                    if (m is ModuleEngines || m is ModuleEnginesFX)
+                                    {
+                                        for (int curveCnt = 0; curveCnt < 5; curveCnt++)
+                                        {
+
+                                            bool useCurve = false;
+                                            switch (curveCnt)
+                                            {
+                                                case 0:
+                                                    if (((ModuleEngines)m).useThrustCurve)
+                                                    {
+                                                        using (new GUILayout.HorizontalScope())
+                                                        {
+                                                            GUILayout.Space(i1 - 60);
+                                                            GUILayout.Label("Use Thrust Curve: " + ((ModuleEngines)m).useThrustCurve);
+                                                        }
+
+                                                        if (((ModuleEngines)m).useThrustCurve)
+                                                        {
+                                                            if (floatCurveGraphs[i, curveCnt] == null)
+                                                                floatCurveGraphs[i, curveCnt] = new FloatCurveGraph(WIDTH - i1 + 10, ((ModuleEngines)m).thrustCurve);
+                                                            useCurve = true;
+                                                        }
+                                                    }
+                                                    break;
+                                                case 1:
+                                                    if (((ModuleEngines)m).useVelCurve)
+                                                    {
+                                                        using (new GUILayout.HorizontalScope())
+                                                        {
+                                                            GUILayout.Space(i1 - 60);
+                                                            GUILayout.Label("Use Velocity Curve: " + ((ModuleEngines)m).useVelCurve);
+                                                        }
+                                                        if (((ModuleEngines)m).useVelCurve)
+                                                        {
+                                                            if (floatCurveGraphs[i, curveCnt] == null)
+                                                                floatCurveGraphs[i, curveCnt] = new FloatCurveGraph(WIDTH - i1 + 10, ((ModuleEngines)m).velCurve);
+                                                            useCurve = true;
+                                                        }
+                                                    }
+                                                    break;
+                                                case 2:
+                                                    if (((ModuleEngines)m).useThrottleIspCurve)
+                                                    {
+                                                        using (new GUILayout.HorizontalScope())
+                                                        {
+                                                            GUILayout.Space(i1 - 60);
+                                                            GUILayout.Label("Use Throttle Isp Curve: " + ((ModuleEngines)m).useThrottleIspCurve);
+                                                        }
+                                                        if (((ModuleEngines)m).useThrottleIspCurve)
+                                                        {
+                                                            if (floatCurveGraphs[i, curveCnt] == null)
+                                                                floatCurveGraphs[i, curveCnt] = new FloatCurveGraph(WIDTH - i1 + 10, ((ModuleEngines)m).throttleIspCurve);
+                                                            useCurve = true;
+                                                        }
+                                                    }
+                                                    break;
+                                                case 3:
+                                                    if (((ModuleEngines)m).useAtmCurve)
+                                                    {
+                                                        using (new GUILayout.HorizontalScope())
+                                                        {
+                                                            GUILayout.Space(i1 - 60);
+                                                            GUILayout.Label("Use Atmo Curve: " + ((ModuleEngines)m).useAtmCurve);
+                                                        }
+                                                        if (((ModuleEngines)m).useAtmCurve)
+                                                        {
+                                                            if (floatCurveGraphs[i, curveCnt] == null)
+                                                                floatCurveGraphs[i, curveCnt] = new FloatCurveGraph(WIDTH - i1 + 10, ((ModuleEngines)m).atmCurve);
+                                                            useCurve = true;
+                                                        }
+                                                    }
+                                                    break;
+                                                case 4:
+                                                    if (((ModuleEngines)m).useAtmCurveIsp)
+                                                    {
+                                                        using (new GUILayout.HorizontalScope())
+                                                        {
+                                                            GUILayout.Space(i1 - 60);
+                                                            GUILayout.Label("Use Atmo ISP Curve: " + ((ModuleEngines)m).useAtmCurveIsp);
+                                                        }
+                                                        if (((ModuleEngines)m).useAtmCurveIsp)
+                                                        {
+                                                            if (floatCurveGraphs[i, curveCnt] == null)
+                                                                floatCurveGraphs[i, curveCnt] = new FloatCurveGraph(WIDTH - i1 + 10, ((ModuleEngines)m).atmCurveIsp);
+                                                            useCurve = true;
+                                                        }
+                                                    }
+                                                    break;
+                                            }
+
+                                            if (useCurve)
+                                            {
+                                                using (new GUILayout.HorizontalScope())
+                                                {
+                                                    GUILayout.Space(i1 - 60);
+                                                    GUILayout.Box(floatCurveGraphs[i, curveCnt].graph);
+                                                    floatCurveGraphs[i, curveCnt].graph.Apply();
+                                                }
+                                                using (new GUILayout.HorizontalScope())
+                                                {
+                                                    sb.Append(floatCurveGraphs[i, curveCnt].floatCurveString);
+                                                    GUILayout.Space(i1 - 60);
+
+                                                    if (!HighLogic.CurrentGame.Parameters.CustomParams<PartInfoSettings>().useAltSkin)
+                                                        GUILayout.TextArea(StripHtml(floatCurveGraphs[i, curveCnt].floatCurveString.ToString()), GUILayout.Width(winRect.width - 90));
+                                                    else
+                                                        GUILayout.TextArea(StripHtml(floatCurveGraphs[i, curveCnt].floatCurveString.ToString()), GUILayout.Width(winRect.width - 80));
+
+                                                    sbPrint.Append(floatCurveGraphs[i, curveCnt].floatCurveString);
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    if (m is ModuleRCS || m is ModuleRCSFX)
+                                    {
+                                        for (int curveCnt = 0; curveCnt < 2; curveCnt++)
+                                        {
+
+                                            bool useCurve = false;
+                                            switch (curveCnt)
+                                            {
+                                                case 0:
+                                                    if (((ModuleRCS)m).useThrustCurve)
+                                                    {
+                                                        using (new GUILayout.HorizontalScope())
+                                                        {
+                                                            GUILayout.Space(i1 - 60);
+                                                            GUILayout.Label("Use Thrust Curve: " + ((ModuleRCS)m).useThrustCurve);
+                                                        }
+
+                                                        if (((ModuleRCS)m).useThrustCurve)
+                                                        {
+                                                            if (floatCurveGraphs[i, curveCnt] == null)
+                                                                floatCurveGraphs[i, curveCnt] = new FloatCurveGraph(WIDTH - i1 + 10, ((ModuleRCS)m).thrustCurve);
+                                                            useCurve = true;
+                                                        }
+                                                    }
+                                                    break;
+                                                case 1:
+                                                    using (new GUILayout.HorizontalScope())
+                                                    {
+                                                        GUILayout.Space(i1 - 60);
+                                                        GUILayout.Label("Atmo curve");
+                                                    }
+                                                        if (floatCurveGraphs[i, curveCnt] == null)
+                                                            floatCurveGraphs[i, curveCnt] = new FloatCurveGraph(WIDTH - i1 + 10, ((ModuleRCS)m).atmosphereCurve);
+                                                        useCurve = true;
+                                                    break;
+                                            }
+
+                                            if (useCurve)
+                                            {
+                                                using (new GUILayout.HorizontalScope())
+                                                {
+                                                    GUILayout.Space(i1 - 60);
+                                                    GUILayout.Box(floatCurveGraphs[i, curveCnt].graph);
+                                                    floatCurveGraphs[i, curveCnt].graph.Apply();
+                                                }
+                                                using (new GUILayout.HorizontalScope())
+                                                {
+                                                    sb.Append(floatCurveGraphs[i, curveCnt].floatCurveString);
+                                                    GUILayout.Space(i1 - 60);
+
+                                                    if (!HighLogic.CurrentGame.Parameters.CustomParams<PartInfoSettings>().useAltSkin)
+                                                        GUILayout.TextArea(StripHtml(floatCurveGraphs[i, curveCnt].floatCurveString.ToString()), GUILayout.Width(winRect.width - 90));
+                                                    else
+                                                        GUILayout.TextArea(StripHtml(floatCurveGraphs[i, curveCnt].floatCurveString.ToString()), GUILayout.Width(winRect.width - 80));
+
+                                                    sbPrint.Append(floatCurveGraphs[i, curveCnt].floatCurveString);
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                }
+                            }
                         }
                     }
                 }
-            }
-            GUILayout.EndScrollView();
-            GUILayout.FlexibleSpace();
-            GUILayout.BeginHorizontal();
-            if (GUILayout.Button("Close"))
-            {
-                Destroy(this);
-                printModule = null;
-            }
+
+                GUILayout.EndScrollView();
+                GUILayout.FlexibleSpace();
+                using (new GUILayout.HorizontalScope())
+                {
+                    if (GUILayout.Button("Close"))
+                    {
+                        Destroy(this);
+                        printModule = null;
+                    }
 
 
-            GUIContent strContent;
-            if (copyAll)
-                strContent = new GUIContent("Copy all to clipboard");
-            else
-                strContent = new GUIContent("Copy to clipboard");
-            var size = GUI.skin.button.CalcSize(strContent);
+                    GUIContent strContent;
+                    if (copyAll)
+                        strContent = new GUIContent("Copy all to clipboard");
+                    else
+                        strContent = new GUIContent("Copy to clipboard");
+                    var size = GUI.skin.button.CalcSize(strContent);
 
-            if (GUILayout.Button(strContent, GUILayout.Width(size.x + 20)))
-            {
-                sbPrint.ToString().CopyToClipboard();
+                    if (GUILayout.Button(strContent, GUILayout.Width(size.x + 20)))
+                    {
+                        sbPrint.ToString().CopyToClipboard();
+                    }
+                }
             }
-            GUILayout.EndHorizontal();
-            GUILayout.EndVertical();
             GUI.DragWindow();
         }
         void OnDestroy()
